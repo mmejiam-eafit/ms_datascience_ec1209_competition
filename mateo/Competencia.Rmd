@@ -1,0 +1,292 @@
+---
+title: "Competencia"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(BMA)
+
+```
+
+## Continous case
+
+
+
+```{r cont}
+train=read.csv('../data/train/datacontinuousstudents_train.csv')
+
+y=train%>%
+  dplyr::select(y)%>%
+  as.matrix()
+x=train%>%
+  select(-y,-id)%>%
+  as.matrix()
+
+obj=bic.glm(x[,1:16],y, glm.family = gaussian(),maxCol=32)
+
+pip=obj$probne0
+vars=obj$namesx
+
+res=data.frame(var=vars,pip=pip)
+
+
+obj=bic.glm(x[,17:32],y, glm.family = gaussian(),maxCol=32)
+
+pip=obj$probne0
+vars=obj$namesx
+
+res=res%>%
+  rbind(data.frame(var=vars,pip=pip))
+
+knitr::kable(res)
+
+var_2=res%>%
+  filter(pip>10)%>%
+  select(var)%>%
+  pull()%>%
+  as.character()
+
+
+x=train%>%
+  select(var_2)%>%
+  as.matrix()
+
+final=bic.glm(x,y, glm.family = gaussian(),maxCol=32)
+
+
+pip=final$probne0
+vars=final$namesx
+
+
+var_3=rbind(data.frame(var=vars,pip=pip))%>%
+  filter(pip>40)%>%
+  select(var)%>%
+  pull()%>%
+  as.character()
+
+
+train_final=train%>%
+  select(y,var_3)
+
+final=bic.glm(y~., data=train_final,glm.family = gaussian(), strict = FALSE, OR = 20)
+
+
+summary(final)
+
+
+test=read.csv('../data/test/datacontinuousstudents_test.csv')
+
+x_test=test%>%
+  select(y,var_3)
+
+y_hat=predict(final,x_test)
+
+print('Test')
+print(mean((x_test$y-y_hat)^2))
+
+
+y_hat=predict(final,train_final)
+
+print('Train')
+print(mean((train_final$y-y_hat)^2))
+
+
+```
+
+## Binary case
+
+You can also embed plots, for example:
+
+```{r bina}
+train=read.csv('../data/train/databinarystudents_train.csv')%>%
+  rename(y=yL)%>%
+  filter(!is.na(id))
+fam="binomial"
+
+
+y=train%>%
+  select(y)%>%
+  as.matrix()
+x=train%>%
+  select(-y,-id)%>%
+  as.matrix()
+
+
+obj=bic.glm(x[,1:16],y, glm.family = fam)
+
+pip=obj$probne0
+vars=obj$namesx
+
+res=data.frame(var=vars,pip=pip)
+
+
+obj=bic.glm(x[,17:32],y, glm.family = fam,maxCol=32)
+
+pip=obj$probne0
+vars=obj$namesx
+
+res=res%>%
+  rbind(data.frame(var=vars,pip=pip))
+
+knitr::kable(res)
+
+var_2=res%>%
+  filter(pip>10)%>%
+  select(var)%>%
+  pull()%>%
+  as.character()
+
+
+x=train%>%
+  select(var_2)%>%
+  as.matrix()
+
+final=bic.glm(x,y, glm.family = fam)
+
+
+pip=final$probne0
+vars=final$namesx
+
+
+var_3=rbind(data.frame(var=vars,pip=pip))%>%
+  filter(pip>40)%>%
+  select(var)%>%
+  pull()%>%
+  as.character()
+
+
+train_final=train%>%
+  select(y,var_3)
+
+final=bic.glm(y~., data=train_final,glm.family = fam, strict = FALSE, OR = 20)
+
+
+summary(final)
+
+
+test=read.csv('../data/test/databinarystudents_test.csv')%>%
+  rename(y=yL)%>%
+  filter(!is.na(id))
+
+x_test=test%>%
+  select(y,var_3)
+
+y_hat=predict(final,x_test)
+
+x_test%>%
+  mutate(pred=ifelse(y_hat>0.5,1,0))%>%
+  count(pred,y)%>%
+  ggplot(aes(pred,y,fill=n,label=n))+geom_tile()+geom_text()
+
+accuracy=function(pred,real){
+  return(sum(pred==real)/length(pred))
+}
+
+y_hat=(predict(final,x_test)>0.5)*1
+
+print('Test')
+print(accuracy(x_test$y,y_hat))
+
+
+y_hat=(predict(final,train_final)>0.5)*1
+
+print('Train')
+print(accuracy(train_final$y,y_hat))
+
+```
+
+## count case
+
+
+
+```{r count}
+train=read.csv('../data/train/datacountstudents_train.csv')%>%
+  rename(y=yC)%>%
+  filter(!is.na(id))
+
+fam=poisson()
+
+
+y=train%>%
+  select(y)%>%
+  as.matrix()
+x=train%>%
+  select(-y,-id)%>%
+  as.matrix()
+
+
+obj=bic.glm(x[,1:16],y, glm.family = fam)
+
+pip=obj$probne0
+vars=obj$namesx
+
+res=data.frame(var=vars,pip=pip)
+
+
+obj=bic.glm(x[,17:32],y, glm.family = fam,maxCol=32)
+
+pip=obj$probne0
+vars=obj$namesx
+
+res=res%>%
+  rbind(data.frame(var=vars,pip=pip))
+
+knitr::kable(res)
+
+var_2=res%>%
+  filter(pip>10)%>%
+  select(var)%>%
+  pull()%>%
+  as.character()
+
+
+x=train%>%
+  select(var_2)%>%
+  as.matrix()
+
+final=bic.glm(x,y, glm.family = fam)
+
+
+pip=final$probne0
+vars=final$namesx
+
+
+var_3=rbind(data.frame(var=vars,pip=pip))%>%
+  filter(pip>40)%>%
+  select(var)%>%
+  pull()%>%
+  as.character()
+
+
+train_final=train%>%
+  select(y,var_3)
+
+final=bic.glm(y~., data=train_final,glm.family = fam, strict = FALSE, OR = 20)
+
+
+summary(final)
+
+
+test=read.csv('../data/test/datacountstudents_test.csv')%>%
+  rename(y=yC)%>%
+  filter(!is.na(id))
+
+x_test=test%>%
+  select(y,var_3)
+
+y_hat=round(predict(final,x_test))
+
+print('Test')
+print(mean((x_test$y-y_hat)^2))
+
+
+y_hat=predict(final,train_final)
+
+print('Train')
+print(mean((train_final$y-y_hat)^2))
+
+
+
+```
