@@ -394,146 +394,8 @@ vars=obj$namesx
 res=res%&gt;%
   rbind(data.frame(var=vars,pip=pip))
 
-knitr::kable(res)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">var</th>
-<th align="right">pip</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">x1</td>
-<td align="right">15.2</td>
-</tr>
-<tr class="even">
-<td align="left">x2</td>
-<td align="right">5.2</td>
-</tr>
-<tr class="odd">
-<td align="left">x3</td>
-<td align="right">5.4</td>
-</tr>
-<tr class="even">
-<td align="left">x4</td>
-<td align="right">1.4</td>
-</tr>
-<tr class="odd">
-<td align="left">x5</td>
-<td align="right">1.9</td>
-</tr>
-<tr class="even">
-<td align="left">x6</td>
-<td align="right">13.9</td>
-</tr>
-<tr class="odd">
-<td align="left">x7</td>
-<td align="right">6.2</td>
-</tr>
-<tr class="even">
-<td align="left">x8</td>
-<td align="right">1.9</td>
-</tr>
-<tr class="odd">
-<td align="left">x9</td>
-<td align="right">2.0</td>
-</tr>
-<tr class="even">
-<td align="left">x10</td>
-<td align="right">46.5</td>
-</tr>
-<tr class="odd">
-<td align="left">x11</td>
-<td align="right">4.2</td>
-</tr>
-<tr class="even">
-<td align="left">x12</td>
-<td align="right">29.3</td>
-</tr>
-<tr class="odd">
-<td align="left">x13</td>
-<td align="right">85.3</td>
-</tr>
-<tr class="even">
-<td align="left">x14</td>
-<td align="right">14.1</td>
-</tr>
-<tr class="odd">
-<td align="left">x15</td>
-<td align="right">11.7</td>
-</tr>
-<tr class="even">
-<td align="left">x16</td>
-<td align="right">2.4</td>
-</tr>
-<tr class="odd">
-<td align="left">x17</td>
-<td align="right">3.1</td>
-</tr>
-<tr class="even">
-<td align="left">x18</td>
-<td align="right">4.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x19</td>
-<td align="right">4.2</td>
-</tr>
-<tr class="even">
-<td align="left">x20</td>
-<td align="right">2.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x21</td>
-<td align="right">16.4</td>
-</tr>
-<tr class="even">
-<td align="left">x22</td>
-<td align="right">2.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x23</td>
-<td align="right">92.8</td>
-</tr>
-<tr class="even">
-<td align="left">x24</td>
-<td align="right">16.3</td>
-</tr>
-<tr class="odd">
-<td align="left">x25</td>
-<td align="right">60.1</td>
-</tr>
-<tr class="even">
-<td align="left">x26</td>
-<td align="right">4.6</td>
-</tr>
-<tr class="odd">
-<td align="left">x27</td>
-<td align="right">4.0</td>
-</tr>
-<tr class="even">
-<td align="left">x28</td>
-<td align="right">2.9</td>
-</tr>
-<tr class="odd">
-<td align="left">x29</td>
-<td align="right">3.5</td>
-</tr>
-<tr class="even">
-<td align="left">x30</td>
-<td align="right">2.9</td>
-</tr>
-<tr class="odd">
-<td align="left">x31</td>
-<td align="right">32.2</td>
-</tr>
-<tr class="even">
-<td align="left">x32</td>
-<td align="right">60.7</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>var_2=res%&gt;%
+
+var_2=res%&gt;%
   filter(pip&gt;10)%&gt;%
   select(var)%&gt;%
   pull()%&gt;%
@@ -606,20 +468,53 @@ x_test=test%&gt;%
 
 y_hat=predict(final,x_test)
 
-print('Test')</code></pre>
-<pre><code>## [1] &quot;Test&quot;</code></pre>
-<pre class="r"><code>print(mean((x_test$y-y_hat)^2))</code></pre>
-<pre><code>## [1] 3.296858</code></pre>
-<pre class="r"><code>y_hat=predict(final,train_final)
 
-print('Train')</code></pre>
-<pre><code>## [1] &quot;Train&quot;</code></pre>
-<pre class="r"><code>print(mean((train_final$y-y_hat)^2))</code></pre>
-<pre><code>## [1] 3.484024</code></pre>
+mse_test=mean((x_test$y-y_hat)^2)
+
+y_hat=1*(y_hat&gt;(-1))
+y=1*(x_test$y&gt;(-1))
+spec_test=mean(y_hat==y)
+
+
+
+
+y_hat=predict(final,train_final)
+
+
+mse_train=mean((train_final$y-y_hat)^2)
+y_hat=1*(y_hat&gt;(-1))
+y=1*(train_final$y&gt;(-1))
+spec_train=mean(y_hat==y)
+
+
+data.frame(tipo=c('Train','Test'),
+           mse=c(mse_train,mse_test),
+           spec=c(spec_train,spec_test))%&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">tipo</th>
+<th align="right">mse</th>
+<th align="right">spec</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Train</td>
+<td align="right">3.484024</td>
+<td align="right">0.775</td>
+</tr>
+<tr class="even">
+<td align="left">Test</td>
+<td align="right">3.296858</td>
+<td align="right">0.700</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="binary-case" class="section level2">
 <h2>Binary case</h2>
-<p>You can also embed plots, for example:</p>
 <pre class="r"><code>train=read.csv('../data/train/databinarystudents_train.csv')%&gt;%
   rename(y=yL)%&gt;%
   filter(!is.na(id))
@@ -650,146 +545,9 @@ vars=obj$namesx
 res=res%&gt;%
   rbind(data.frame(var=vars,pip=pip))
 
-knitr::kable(res)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">var</th>
-<th align="right">pip</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">x1</td>
-<td align="right">76.8</td>
-</tr>
-<tr class="even">
-<td align="left">x2</td>
-<td align="right">24.0</td>
-</tr>
-<tr class="odd">
-<td align="left">x3</td>
-<td align="right">15.1</td>
-</tr>
-<tr class="even">
-<td align="left">x4</td>
-<td align="right">9.1</td>
-</tr>
-<tr class="odd">
-<td align="left">x5</td>
-<td align="right">2.0</td>
-</tr>
-<tr class="even">
-<td align="left">x6</td>
-<td align="right">10.6</td>
-</tr>
-<tr class="odd">
-<td align="left">x7</td>
-<td align="right">2.0</td>
-</tr>
-<tr class="even">
-<td align="left">x8</td>
-<td align="right">3.3</td>
-</tr>
-<tr class="odd">
-<td align="left">x9</td>
-<td align="right">2.5</td>
-</tr>
-<tr class="even">
-<td align="left">x10</td>
-<td align="right">11.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x11</td>
-<td align="right">3.3</td>
-</tr>
-<tr class="even">
-<td align="left">x12</td>
-<td align="right">2.0</td>
-</tr>
-<tr class="odd">
-<td align="left">x13</td>
-<td align="right">6.8</td>
-</tr>
-<tr class="even">
-<td align="left">x14</td>
-<td align="right">6.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x15</td>
-<td align="right">38.0</td>
-</tr>
-<tr class="even">
-<td align="left">x16</td>
-<td align="right">4.0</td>
-</tr>
-<tr class="odd">
-<td align="left">x17</td>
-<td align="right">100.0</td>
-</tr>
-<tr class="even">
-<td align="left">x18</td>
-<td align="right">97.3</td>
-</tr>
-<tr class="odd">
-<td align="left">x19</td>
-<td align="right">1.4</td>
-</tr>
-<tr class="even">
-<td align="left">x20</td>
-<td align="right">76.3</td>
-</tr>
-<tr class="odd">
-<td align="left">x21</td>
-<td align="right">9.8</td>
-</tr>
-<tr class="even">
-<td align="left">x22</td>
-<td align="right">1.5</td>
-</tr>
-<tr class="odd">
-<td align="left">x23</td>
-<td align="right">29.4</td>
-</tr>
-<tr class="even">
-<td align="left">x24</td>
-<td align="right">81.1</td>
-</tr>
-<tr class="odd">
-<td align="left">x25</td>
-<td align="right">3.4</td>
-</tr>
-<tr class="even">
-<td align="left">x26</td>
-<td align="right">9.0</td>
-</tr>
-<tr class="odd">
-<td align="left">x27</td>
-<td align="right">25.0</td>
-</tr>
-<tr class="even">
-<td align="left">x28</td>
-<td align="right">6.9</td>
-</tr>
-<tr class="odd">
-<td align="left">x29</td>
-<td align="right">4.9</td>
-</tr>
-<tr class="even">
-<td align="left">x30</td>
-<td align="right">3.0</td>
-</tr>
-<tr class="odd">
-<td align="left">x31</td>
-<td align="right">1.4</td>
-</tr>
-<tr class="even">
-<td align="left">x32</td>
-<td align="right">1.5</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>var_2=res%&gt;%
+#knitr::kable(res)
+
+var_2=res%&gt;%
   filter(pip&gt;10)%&gt;%
   select(var)%&gt;%
   pull()%&gt;%
@@ -871,16 +629,52 @@ x_test%&gt;%
 
 y_hat=(predict(final,x_test)&gt;0.5)*1
 
-print('Test')</code></pre>
-<pre><code>## [1] &quot;Test&quot;</code></pre>
-<pre class="r"><code>print(accuracy(x_test$y,y_hat))</code></pre>
-<pre><code>## [1] 0.7333333</code></pre>
-<pre class="r"><code>y_hat=(predict(final,train_final)&gt;0.5)*1
 
-print('Train')</code></pre>
-<pre><code>## [1] &quot;Train&quot;</code></pre>
-<pre class="r"><code>print(accuracy(train_final$y,y_hat))</code></pre>
-<pre><code>## [1] 0.775</code></pre>
+
+
+
+roc_obj &lt;- roc(x_test$y, predict(final,x_test))</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code>spec_test=auc(roc_obj)*1
+
+acu_test=accuracy(x_test$y,y_hat)
+
+y_hat=(predict(final,train_final)&gt;0.5)*1
+
+roc_obj &lt;- roc(train_final$y, predict(final,train_final))</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1
+## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code>spec_train=auc(roc_obj)*1
+
+acu_train=accuracy(train_final$y,y_hat)
+
+
+data.frame(tipo=c('Train','Test'),
+           acu=c(acu_train,acu_test),
+           spec=c(spec_train,spec_test))%&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">tipo</th>
+<th align="right">acu</th>
+<th align="right">spec</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Train</td>
+<td align="right">0.7750000</td>
+<td align="right">0.81625</td>
+</tr>
+<tr class="even">
+<td align="left">Test</td>
+<td align="right">0.7333333</td>
+<td align="right">0.66500</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="count-case" class="section level2">
 <h2>count case</h2>
@@ -915,146 +709,9 @@ vars=obj$namesx
 res=res%&gt;%
   rbind(data.frame(var=vars,pip=pip))
 
-knitr::kable(res)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">var</th>
-<th align="right">pip</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">x1</td>
-<td align="right">29.0</td>
-</tr>
-<tr class="even">
-<td align="left">x2</td>
-<td align="right">8.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x3</td>
-<td align="right">98.4</td>
-</tr>
-<tr class="even">
-<td align="left">x4</td>
-<td align="right">60.6</td>
-</tr>
-<tr class="odd">
-<td align="left">x5</td>
-<td align="right">2.5</td>
-</tr>
-<tr class="even">
-<td align="left">x6</td>
-<td align="right">23.8</td>
-</tr>
-<tr class="odd">
-<td align="left">x7</td>
-<td align="right">19.9</td>
-</tr>
-<tr class="even">
-<td align="left">x8</td>
-<td align="right">2.6</td>
-</tr>
-<tr class="odd">
-<td align="left">x9</td>
-<td align="right">2.8</td>
-</tr>
-<tr class="even">
-<td align="left">x10</td>
-<td align="right">28.8</td>
-</tr>
-<tr class="odd">
-<td align="left">x11</td>
-<td align="right">7.1</td>
-</tr>
-<tr class="even">
-<td align="left">x12</td>
-<td align="right">4.2</td>
-</tr>
-<tr class="odd">
-<td align="left">x13</td>
-<td align="right">2.6</td>
-</tr>
-<tr class="even">
-<td align="left">x14</td>
-<td align="right">33.8</td>
-</tr>
-<tr class="odd">
-<td align="left">x15</td>
-<td align="right">9.9</td>
-</tr>
-<tr class="even">
-<td align="left">x16</td>
-<td align="right">13.0</td>
-</tr>
-<tr class="odd">
-<td align="left">x17</td>
-<td align="right">4.0</td>
-</tr>
-<tr class="even">
-<td align="left">x18</td>
-<td align="right">3.2</td>
-</tr>
-<tr class="odd">
-<td align="left">x19</td>
-<td align="right">2.7</td>
-</tr>
-<tr class="even">
-<td align="left">x20</td>
-<td align="right">3.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x21</td>
-<td align="right">2.8</td>
-</tr>
-<tr class="even">
-<td align="left">x22</td>
-<td align="right">3.1</td>
-</tr>
-<tr class="odd">
-<td align="left">x23</td>
-<td align="right">2.6</td>
-</tr>
-<tr class="even">
-<td align="left">x24</td>
-<td align="right">42.8</td>
-</tr>
-<tr class="odd">
-<td align="left">x25</td>
-<td align="right">100.0</td>
-</tr>
-<tr class="even">
-<td align="left">x26</td>
-<td align="right">10.6</td>
-</tr>
-<tr class="odd">
-<td align="left">x27</td>
-<td align="right">3.3</td>
-</tr>
-<tr class="even">
-<td align="left">x28</td>
-<td align="right">13.4</td>
-</tr>
-<tr class="odd">
-<td align="left">x29</td>
-<td align="right">3.1</td>
-</tr>
-<tr class="even">
-<td align="left">x30</td>
-<td align="right">2.7</td>
-</tr>
-<tr class="odd">
-<td align="left">x31</td>
-<td align="right">7.9</td>
-</tr>
-<tr class="even">
-<td align="left">x32</td>
-<td align="right">15.2</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>var_2=res%&gt;%
+#knitr::kable(res)
+
+var_2=res%&gt;%
   filter(pip&gt;10)%&gt;%
   select(var)%&gt;%
   pull()%&gt;%
@@ -1116,21 +773,55 @@ summary(final)</code></pre>
   rename(y=yC)%&gt;%
   filter(!is.na(id))
 
+
+
 x_test=test%&gt;%
   select(y,var_3)
 
 y_hat=round(predict(final,x_test))
 
-print('Test')</code></pre>
-<pre><code>## [1] &quot;Test&quot;</code></pre>
-<pre class="r"><code>print(mean((x_test$y-y_hat)^2))</code></pre>
-<pre><code>## [1] 1.666667</code></pre>
-<pre class="r"><code>y_hat=predict(final,train_final)
 
-print('Train')</code></pre>
-<pre><code>## [1] &quot;Train&quot;</code></pre>
-<pre class="r"><code>print(mean((train_final$y-y_hat)^2))</code></pre>
-<pre><code>## [1] 1.112944</code></pre>
+mse_test=mean((x_test$y-y_hat)^2)
+
+y_hat=1*(y_hat&gt;(-1))
+y=1*(x_test$y&gt;(-1))
+spec_test=mean(y_hat==y)
+
+
+y_hat=round(predict(final,train_final))
+
+
+mse_train=mean((train_final$y-y_hat)^2)
+y_hat=1*(y_hat==(0))
+y=1*(train_final$y==(0))
+spec_train=mean(y_hat==y)
+
+
+data.frame(tipo=c('Train','Test'),
+           mse=c(mse_train,mse_test),
+           spec=c(spec_train,spec_test))%&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">tipo</th>
+<th align="right">mse</th>
+<th align="right">spec</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Train</td>
+<td align="right">1.233333</td>
+<td align="right">0.625</td>
+</tr>
+<tr class="even">
+<td align="left">Test</td>
+<td align="right">1.666667</td>
+<td align="right">1.000</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 

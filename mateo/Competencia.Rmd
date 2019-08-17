@@ -7,6 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(BMA)
+library(pROC)
 
 ```
 
@@ -40,7 +41,6 @@ vars=obj$namesx
 res=res%>%
   rbind(data.frame(var=vars,pip=pip))
 
-knitr::kable(res)
 
 var_2=res%>%
   filter(pip>10)%>%
@@ -83,21 +83,35 @@ x_test=test%>%
 
 y_hat=predict(final,x_test)
 
-print('Test')
-print(mean((x_test$y-y_hat)^2))
+
+mse_test=mean((x_test$y-y_hat)^2)
+
+y_hat=1*(y_hat>(-1))
+y=1*(x_test$y>(-1))
+spec_test=mean(y_hat==y)
+
+
 
 
 y_hat=predict(final,train_final)
 
-print('Train')
-print(mean((train_final$y-y_hat)^2))
+
+mse_train=mean((train_final$y-y_hat)^2)
+y_hat=1*(y_hat>(-1))
+y=1*(train_final$y>(-1))
+spec_train=mean(y_hat==y)
+
+
+data.frame(tipo=c('Train','Test'),
+           mse=c(mse_train,mse_test),
+           spec=c(spec_train,spec_test))%>%
+  knitr::kable()
 
 
 ```
 
 ## Binary case
 
-You can also embed plots, for example:
 
 ```{r bina}
 train=read.csv('../data/train/databinarystudents_train.csv')%>%
@@ -130,7 +144,7 @@ vars=obj$namesx
 res=res%>%
   rbind(data.frame(var=vars,pip=pip))
 
-knitr::kable(res)
+#knitr::kable(res)
 
 var_2=res%>%
   filter(pip>10)%>%
@@ -186,14 +200,29 @@ accuracy=function(pred,real){
 
 y_hat=(predict(final,x_test)>0.5)*1
 
-print('Test')
-print(accuracy(x_test$y,y_hat))
 
+
+
+
+roc_obj <- roc(x_test$y, predict(final,x_test))
+
+spec_test=auc(roc_obj)*1
+
+acu_test=accuracy(x_test$y,y_hat)
 
 y_hat=(predict(final,train_final)>0.5)*1
 
-print('Train')
-print(accuracy(train_final$y,y_hat))
+roc_obj <- roc(train_final$y, predict(final,train_final))
+
+spec_train=auc(roc_obj)*1
+
+acu_train=accuracy(train_final$y,y_hat)
+
+
+data.frame(tipo=c('Train','Test'),
+           acu=c(acu_train,acu_test),
+           spec=c(spec_train,spec_test))%>%
+  knitr::kable()
 
 ```
 
@@ -233,7 +262,7 @@ vars=obj$namesx
 res=res%>%
   rbind(data.frame(var=vars,pip=pip))
 
-knitr::kable(res)
+#knitr::kable(res)
 
 var_2=res%>%
   filter(pip>10)%>%
@@ -273,19 +302,35 @@ test=read.csv('../data/test/datacountstudents_test.csv')%>%
   rename(y=yC)%>%
   filter(!is.na(id))
 
+
+
 x_test=test%>%
   select(y,var_3)
 
 y_hat=round(predict(final,x_test))
 
-print('Test')
-print(mean((x_test$y-y_hat)^2))
+
+mse_test=mean((x_test$y-y_hat)^2)
+
+y_hat=1*(y_hat>(-1))
+y=1*(x_test$y>(-1))
+spec_test=mean(y_hat==y)
 
 
-y_hat=predict(final,train_final)
+y_hat=round(predict(final,train_final))
 
-print('Train')
-print(mean((train_final$y-y_hat)^2))
+
+mse_train=mean((train_final$y-y_hat)^2)
+y_hat=1*(y_hat==(0))
+y=1*(train_final$y==(0))
+spec_train=mean(y_hat==y)
+
+
+data.frame(tipo=c('Train','Test'),
+           mse=c(mse_train,mse_test),
+           spec=c(spec_train,spec_test))%>%
+  knitr::kable()
+
 
 
 
