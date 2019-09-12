@@ -83,6 +83,10 @@ x_test=test%>%
 
 y_hat=predict(final,x_test)
 
+data.frame(real=x_test$y,guess=y_hat)%>%
+  write.csv('../validation/continua/mateo.csv')
+
+
 
 mse_test=mean((x_test$y-y_hat)^2)
 
@@ -94,6 +98,7 @@ spec_test=mean(y_hat==y)
 
 
 y_hat=predict(final,train_final)
+
 
 
 mse_train=mean((train_final$y-y_hat)^2)
@@ -204,7 +209,12 @@ y_hat=(predict(final,x_test)>0.5)*1
 
 
 
+
 roc_obj <- roc(x_test$y, predict(final,x_test))
+
+data.frame(real=x_test$y,guess=predict(final,x_test))%>%
+  write.csv('../validation/binaria/mateo.csv')
+
 
 spec_test=auc(roc_obj)*1
 
@@ -309,11 +319,14 @@ x_test=test%>%
 
 y_hat=round(predict(final,x_test))
 
+data.frame(real=x_test$y,guess=y_hat)%>%
+  write.csv('../validation/conteo/mateo.csv')
+
 
 mse_test=mean((x_test$y-y_hat)^2)
 
-y_hat=1*(y_hat>(-1))
-y=1*(x_test$y>(-1))
+y_hat=1*(y_hat==(-1))
+y=1*(x_test$y==0)
 spec_test=mean(y_hat==y)
 
 
