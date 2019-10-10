@@ -126,7 +126,7 @@ eval=function(seed,x,y){
   auc_val=auc(y_test,p)
   y_hat=ifelse(p>0.5,1,0)
   
-  accuracy=mean(y_train==y_hat)
+  accuracy=mean(y_test==y_hat)
   
   
   beta=coef(model)[-1]
@@ -189,16 +189,57 @@ eval_c=function(seed,x,y){
   
   p=round(predict.glm(model, newdata=test,type='response'))
   
+  
+  
   mse=mean((y_test-p)^2)
   
   y_hat=ifelse(p==0,0,1)
-  y_train_0=ifelse(y_train==0,0,1)
+  y_test_0=ifelse(y_test==0,0,1)
   
-  accuracy=mean(y_train_0==y_hat)
+  accuracy=mean(y_test_0==y_hat)
   beta=coef(model)[-1]
   ans=list(spec=accuracy,global=mse,beta=beta)
   return(ans)
 }
+
+eval_c2=function(seed,x,y){
+  library(glmnet)
+  set.seed(seed+1000)
+  
+  train_id=sample(length(y),0.8*length(y))
+  x_train=x[train_id,]
+  y_train=y[train_id]
+  x_test=x[-train_id,]
+  y_test=y[-train_id]
+  
+  train=data.frame(x_train)%>%
+    mutate(y=y_train)
+  
+  model=glm(y~.,family="poisson",data = train)
+  
+  test=data.frame(x_test)%>%
+    mutate(y=y_test)
+  
+  p=round(predict.glm(model, newdata=test,type='response'))
+  
+  ridge_cv <- cv.glmnet(x_train, y_train, alpha = 0,family = "poisson",intercept =TRUE)
+  # Best lambda value
+  best_lambda <- ridge_cv$lambda.min
+  best_ridge <- glmnet(x_train, y_train, alpha = 0,family = "poisson", lambda = best_lambda,intercept =TRUE)
+  p=round(predict(best_ridge, s = best_lambda, newx = x_test))
+  
+  
+  mse=mean((y_test-p)^2)
+  
+  y_hat=ifelse(p==0,0,1)
+  y_test_0=ifelse(y_test==0,0,1)
+  
+  accuracy=mean(y_test_0==y_hat)
+  beta=coef(model)[-1]
+  ans=list(spec=accuracy,global=mse,beta=beta)
+  return(ans)
+}
+
 
 
 bics_c=function(seed,x,y){
@@ -262,7 +303,7 @@ lasso_n=function(seed,x,y){
 }
 
 
-eval_n=function(seed,x,y){
+eval_n2=function(seed,x,y){
   library(glmnet)
   set.seed(seed+1000)
   
@@ -280,14 +321,20 @@ eval_n=function(seed,x,y){
   test=data.frame(x_test)%>%
     mutate(y=y_test)
   
-  p=predict.glm(model, newdata=test,type='response')
+  #p=predict.glm(model, newdata=test,type='response')
+  
+  ridge_cv <- cv.glmnet(x_train, y_train, alpha = 0,intercept =TRUE)
+  # Best lambda value
+  best_lambda <- ridge_cv$lambda.min
+  best_ridge <- glmnet(x_train, y_train, alpha = 0, lambda = best_lambda,intercept =TRUE)
+  p=predict(best_ridge, s = best_lambda, newx = x_test)
   
   mse=mean((y_test-p)^2)
   
   y_hat=ifelse(p>(-1),0,1)
-  y_train_0=ifelse(y_train>(-1),0,1)
+  y_test_0=ifelse(y_test>(-1),0,1)
   
-  accuracy=mean(y_train_0==y_hat)
+  accuracy=mean(y_test_0==y_hat)
   beta=coef(model)[-1]
   ans=list(spec=accuracy,global=mse,beta=beta)
   return(ans)
@@ -322,4 +369,39 @@ bics_n=function(seed,x,y){
   ans=list(selected=selected,beta=beta)
   return(ans)
 }
+
+eval_n=function(seed,x,y){
+  library(glmnet)
+  set.seed(seed+1000)
+  
+  train_id=sample(length(y),0.8*length(y))
+  x_train=x[train_id,]
+  y_train=y[train_id]
+  x_test=x[-train_id,]
+  y_test=y[-train_id]
+  
+  train=data.frame(x_train)%>%
+    mutate(y=y_train)
+  
+  model=glm(y~.,family=gaussian(),data = train)
+  
+  test=data.frame(x_test)%>%
+    mutate(y=y_test)
+  
+  p=predict.glm(model, newdata=test,type='response')
+  
+  
+  mse=mean((y_test-p)^2)
+  
+  y_hat=ifelse(p>(-1),0,1)
+  y_test_0=ifelse(y_test>(-1),0,1)
+  
+  accuracy=mean(y_test_0==y_hat)
+  beta=coef(model)[-1]
+  ans=list(spec=accuracy,global=mse,beta=beta)
+  return(ans)
+}
+
+
+
 
