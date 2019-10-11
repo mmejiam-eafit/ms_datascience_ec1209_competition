@@ -1,6 +1,6 @@
 ### Archivos
 data_train="input/datacountstudents.csv"
-data_test="testConteo.csv"
+data_test="datasetx.csv"
 nombre_output='output_conteo.csv'
 ### Librerias
 library(tidyverse)
@@ -18,7 +18,7 @@ model=glm(y~.,family="poisson",data = train)
 
 ### Testeo
 
-test=read.csv("testConteo.csv")
+test=read.csv(data_test)
 
 p=round(predict.glm(model, newdata=test,type='response'))
 data.frame(y_hat=p)%>%
