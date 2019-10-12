@@ -9,8 +9,8 @@ Hay cuatro carpetas con la metodologia de cada persona
 La carpeta Modelos_finales_y_entregable tiene los modelos finales seleccionados.
 
 - Continuo: Modelo_final_continuo.ipynb
-- Binario: Modelo_final_continuo.ipynb
-- Conteo: Modelo_binario.R
+- Binario: Modelo_final_binario.ipynb
+- Conteo: Modelo_conteo.R
 
 Las funciones de toda la metodologia de selección de variables para continuo y conteo están en mateo/funciones.R y Explicación_Continua_Conteo.Rmd
 
