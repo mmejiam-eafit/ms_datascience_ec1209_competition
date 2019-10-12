@@ -1,7 +1,7 @@
 ---
 title: "Competencia"
 author: "Mateo, Miguel, Steward y Camilo"
-output: html_document
+output: word_document
 ---
 
 ```{r setup, include=FALSE}
@@ -68,12 +68,12 @@ betas=get_betas(las)
 colnames(betas)=colnames(x)
 
 ok=colnames(x)[spip>0.5]
-plotly::ggplotly(data.frame(betas)%>%
+data.frame(betas)%>%
   dplyr::select(ok)%>%
   mutate(seed=1:nrow(betas))%>%
   gather(beta,coef,-seed)%>%
   filter(coef!=0)%>%
-  ggplot(aes(x=coef,fill=beta))+geom_histogram()+facet_wrap(~beta,scales = 'free'))
+  ggplot(aes(x=coef,fill=beta))+geom_histogram()+facet_wrap(~beta,scales = 'free')
 
 x_red=data.frame(x)%>% ##quitamos x1 por el cambio de signo??
   dplyr::select(x14,x22,x24,x25,x26,x3,x32,x4)%>%
@@ -90,13 +90,13 @@ summary(model)
 
 mets=get_met(evals)
 
-plotly::ggplotly(data.frame(spec=mets$spec,global=mets$global)%>%
+data.frame(spec=mets$spec,global=mets$global)%>%
   mutate(seed=1:length(mets$spec))%>%
   gather(metrica,value,-seed)%>%
   filter(value<10)%>%
   ggplot(aes(x=metrica,y=value,fill=metrica))+
   geom_boxplot()+
-  facet_wrap(~metrica,scales = 'free'))
+  facet_wrap(~metrica,scales = 'free')
 
 
 ```
@@ -115,12 +115,12 @@ betas=get_betas(las)
 colnames(betas)=colnames(x)
 
 ok=colnames(x)[spip>0.5]
-plotly::ggplotly(data.frame(betas)%>%
+data.frame(betas)%>%
   dplyr::select(ok)%>%
   mutate(seed=1:nrow(betas))%>%
   gather(beta,coef,-seed)%>%
   filter(coef!=0)%>%
-  ggplot(aes(x=coef,fill=beta))+geom_histogram()+facet_wrap(~beta,scales = 'free'))
+  ggplot(aes(x=coef,fill=beta))+geom_histogram()+facet_wrap(~beta,scales = 'free')
 
 x_red=data.frame(x)%>% ##quitamos x1 por el cambio de signo??
   dplyr::select(x22,x24,x25,x3)%>%
@@ -137,13 +137,13 @@ summary(model)
 
 mets=get_met(evals)
 
-plotly::ggplotly(data.frame(spec=mets$spec,global=mets$global)%>%
+data.frame(spec=mets$spec,global=mets$global)%>%
   mutate(seed=1:length(mets$spec))%>%
   gather(metrica,value,-seed)%>%
   filter(value<10)%>%
   ggplot(aes(x=metrica,y=value,fill=metrica))+
   geom_boxplot()+
-  facet_wrap(~metrica,scales = 'free'))
+  facet_wrap(~metrica,scales = 'free')
 
 ```
 
@@ -175,12 +175,12 @@ betas=get_betas(las)
 colnames(betas)=colnames(x)
 
 ok=colnames(x)[spip>0.5]
-plotly::ggplotly(data.frame(betas)%>%
+data.frame(betas)%>%
   dplyr::select(ok)%>%
   mutate(seed=1:nrow(betas))%>%
   gather(beta,coef,-seed)%>%
   filter(coef!=0)%>%
-  ggplot(aes(x=coef,fill=beta))+geom_histogram()+facet_wrap(~beta,scales = 'free'))
+  ggplot(aes(x=coef,fill=beta))+geom_histogram()+facet_wrap(~beta,scales = 'free')
 
 x_red=data.frame(x)%>% ##quitamos x1 por el cambio de signo??
   dplyr::select(x1,x6,x10,x13,x20,x23,x25,x31)%>%
@@ -198,13 +198,13 @@ summary(model)
 
 mets=get_met(evals)
 
-plotly::ggplotly(data.frame(spec=mets$spec,global=mets$global)%>%
+data.frame(spec=mets$spec,global=mets$global)%>%
   mutate(seed=1:length(mets$spec))%>%
   gather(metrica,value,-seed)%>%
   filter(value<10)%>%
   ggplot(aes(x=metrica,y=value,fill=metrica))+
   geom_boxplot()+
-  facet_wrap(~metrica,scales = 'free'))
+  facet_wrap(~metrica,scales = 'free')
 ```
 
 
@@ -241,14 +241,13 @@ model=glm(y~.,family=gaussian(),data = train)
 summary(model)
 
 mets=get_met(evals)
-
- plotly::ggplotly(data.frame(spec=mets$spec,global=mets$global)%>%
+data.frame(spec=mets$spec,global=mets$global)%>%
   mutate(seed=1:length(mets$spec))%>%
   gather(metrica,value,-seed)%>%
   filter(value<10)%>%
   ggplot(aes(x=metrica,y=value,fill=metrica))+
   geom_boxplot()+
-  facet_wrap(~metrica,scales = 'free'))
+  facet_wrap(~metrica,scales = 'free')
 
 
 

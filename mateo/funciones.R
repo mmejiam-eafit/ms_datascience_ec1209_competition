@@ -403,5 +403,37 @@ eval_n=function(seed,x,y){
 }
 
 
-
+lasso_n2=function(seed,x,y){
+  library(glmnet)
+  set.seed(seed)
+  
+  train_id=sample(length(y),0.8*length(y))
+  x_train=x[train_id,]
+  y_train=y[train_id]
+  x_test=x[-train_id,]
+  y_test=y[-train_id]
+  tm=matrix(rep(colMeans(x_train),nrow(x_train)),ncol=ncol(x_train),byrow = TRUE)
+  sd=matrix(rep(apply(x_train,2,sd),nrow(x_train)),ncol=ncol(x_train),byrow = TRUE)
+  
+  x_train=(x_train-tm)/sd
+  x_test=(x_test-head(tm,nrow(x_test)))/head(sd,nrow(x_test))
+  
+  cvfit = cv.glmnet(x_train, y_train, family = 'gaussian', type.measure = "mse")
+  selected=as.numeric(coef(cvfit, s = "lambda.min"))[-1]!=0
+  
+  train=data.frame(x_train)%>%
+    dplyr::select(colnames(x)[selected])%>%
+    mutate(y=y_train)
+  
+  model=glm(y~.,family='gaussian',data = train)
+  
+  test=data.frame(x_test)%>%
+    dplyr::select(colnames(x)[selected])%>%
+    mutate(y=y_test)
+  
+  beta=rep(0,ncol(x))
+  beta[selected]=coef(model)[-1]
+  ans=list(selected=selected,beta=beta)
+  return(ans)
+}
 
