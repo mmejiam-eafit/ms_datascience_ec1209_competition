@@ -8,13 +8,12 @@ For the internal competition we created different workspaces for each person on 
 
 ## Deliverable
 
-<<<<<<< HEAD
+
 - Continuo: Modelo_final_continuo.ipynb
 - Binario: Modelo_final_binario.ipynb
 - Conteo: Modelo_conteo.R
-=======
-The folder named "Modelos_finales_y_entregable" contains all selected models and their methodologies.
->>>>>>> c602e1cd3c106968ba83da43bf3305fcc995340e
+
+
 
 ### Models
 
