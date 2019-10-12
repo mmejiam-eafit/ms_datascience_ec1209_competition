@@ -8,18 +8,13 @@ For the internal competition we created different workspaces for each person on 
 
 ## Deliverable
 
-
-- Continuo: Modelo_final_continuo.ipynb
-- Binario: Modelo_final_binario.ipynb
-- Conteo: Modelo_conteo.R
-
-
+The folder named "Modelos_finales_y_entregable" contains all selected models and their methodologies.
 
 ### Models
 
 1. Continuous: Modelo_final_continuo.ipynb
-2. Binary: 
-3. Counting:
+2. Binary: Modelo_final_binario.ipynb
+3. Counting: Modelo_conteo.R
 
 The scripts followed for variable selection method of continuous and counting datasets can be found in files "mateo/funciones.R" and "Explicación_Continua_Conteo.Rmd".
 
