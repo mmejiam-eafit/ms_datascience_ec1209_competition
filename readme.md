@@ -1,18 +1,21 @@
 # Competencia
 
-### Competencia interna
+For this problem we executed an approach of "divide and conquer", based on the assumption that generating a competition between the members of the team, and creating a feedback loop from the models created by each member of the team, would generate the best possible model for the 3 problems posed for this competition (Counting, Continuous, and Binary predictions)
 
-Hay cuatro carpetas con la metodologia de cada persona
+## Internal Competition
 
-### Entregable
+For the internal competition we created different workspaces for each person on the team. In there we can see the approach each person took and the corrections made based on feedback from the team.
 
-La carpeta Modelos_finales_y_entregable tiene los modelos finales seleccionados.
+## Deliverable
 
-- Continuo: Modelo_final_continuo.ipynb
-- Binario: Modelo_final_continuo.ipynb
-- Conteo: Modelo_binario.R
+The folder named "Modelos_finales_y_entregable" contains all selected models and their methodologies.
 
-Las funciones de toda la metodologia de selección de variables para continuo y conteo están en mateo/funciones.R y Explicación_Continua_Conteo.Rmd
+### Models
 
-La información del binario está en camilo/Nuevos modelos/Binary.ipynb
+1. Continuous: Modelo_final_continuo.ipynb
+2. Binary: 
+3. Counting:
 
+The scripts followed for variable selection method of continuous and counting datasets can be found in files "mateo/funciones.R" and "Explicación_Continua_Conteo.Rmd".
+
+The script containing the information for variable selection method of binary dataset can be found in "camilo/Nuevos modelos/Binary.ipynb"
