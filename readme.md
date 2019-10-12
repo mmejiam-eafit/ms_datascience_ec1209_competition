@@ -1,4 +1,4 @@
-# Competencia
+# Competition
 
 For this problem we executed an approach of "divide and conquer", based on the assumption that generating a competition between the members of the team, and creating a feedback loop from the models created by each member of the team, would generate the best possible model for the 3 problems posed for this competition (Counting, Continuous, and Binary predictions)
 
